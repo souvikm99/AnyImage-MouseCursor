@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+        <style>
+            .wspace{
+                text-align: left;
+                float: right;
+                height: 100%;
+                width: 390px;
+                border: 1px solid black;
+                cursor:url(./1.png), auto;
+                padding:10px;
+            }
+            body{
+                background-color: aqua;
+                font-family: 'Roboto', sans-serif;
+                
+            }
+            .button1 {background-color: #4CAF50;} /* Green */
+            .button2 {background-color: #008CBA;} /* Blue */
+            .button3 {background-color: #f44336;} /* Red */
+            .button4 {background-color: #e7e7e7; color: black;} /* Gray */
+            .button5 {background-color: #555555;} /* Black */
+            button{
+                  cursor: pointer;
+                  background-color: #4CAF50; /* Green */
+                  border: none;
+                  color: white;
+                  /*padding: 15px 32px;*/
+                  text-align: center;
+                  text-decoration: none;
+                  display: inline-block;
+                  font-size: 16px;
+            }
+            /**{
+                cursor:url(./1.png), auto;
+            }*/
+        </style>
+    </head>
+    <body>
+
+        <div class="wspace">
+            
+            <label>Upload any image here</label>
+            <br>
+            <input type="file" id="uploader">
+            <button onclick='resize()' class="button1">Change Cursor</button>
+            <img id="image">
+            <br><br>
+            <!--<input id="imagefile" type="file" value="" name="" />
+            <button onclick="up()">upload</button>-->
+            <label>Paste the link of an max 120px X 12opx image here</label>
+            <br>
+            <input id="inpt1" type="text" placeholder="enter img link..." value="">
+            <button onclick="custom()" class="button2" style="border-radius: 50px;">Go</button>
+            <br>
+            <br>
+            <label>Or Choose from templates:</label>
+            <br>
+            <button onclick="hi(1)" class="button3">Magic Wand</button>
+            <button onclick="hi(2)" class="button4">Thanos</button>
+            <button onclick="hi(3)" class="button1">Brocoli</button>
+            <button onclick="hi(4)" class="button2">Mr. Bean</button>
+            <button onclick="hi(5)" class="button5">Batman</button>
+        </div>
+
+       <!-- <div style="height: 100px; width:100px; border:1px solid red; cursor:url(https://ibb.co/3mT9WCn), auto;">
+
+        </div> -->
+
+
+
+
+        
+        <script>
+            var x = 0;
+            function hi(a){
+            var icon = a;
+            console.log("hehe");
+            //document.body.style.setProperty('cursor', 'pointer');
+            document.querySelectorAll('*').forEach(function(node){
+                node.style.cursor = 'url(./'+a+'.png), auto';
+            })
+            }
+            
+            function custom(){
+                var str = document.getElementById("inpt1").value;
+                console.log(str)
+                document.querySelectorAll('*').forEach(function(node){
+                node.style.cursor = 'url('+str+'), auto';
+            })
+            }
+            
+            async function up(){
+                
+                let formData = new FormData(); 
+                formData.append("file", imagefile.files[0]);
+                await fetch('/upload.php', {
+                method: "POST", 
+                body: formData
+                });    
+                alert('The file has been uploaded successfully.');
+                
+                document.querySelectorAll('*').forEach(function(node){
+                node.style.cursor = 'url(upload/'+x+'), auto';
+                console.log(x);
+                })
+                //console.log(x.value);
+
+                
+            }
+            
+            $(document).ready(function(){
+                $('input[type="file"]').change(function(e){
+                    var fileName = e.target.files[0].name;
+                    //alert('The file "' + fileName +  '" has been selected.');
+                    x = fileName;
+                    console.log(x);
+                });
+            });
+            
+            async function up2(z){
+                var lol = z;
+                
+                var num = Date.now() + Math.random();
+                console.log(num);
+                document.cookie = "cname" + "=" + num ;
+                //z.append("file", imagefile.files[0]);
+                await fetch('/upload2.php', {
+                method: "POST", 
+                body: z
+                });    
+                alert('The file has been uploaded successfully.');
+                document.querySelectorAll('*').forEach(function(node){
+                node.style.cursor = 'url(upload/'+num+'.png), auto';
+                console.log(x);
+                })
+                
+            }
+            
+            
+            
+            function resize(){
+                //define the width to resize e.g 600px
+                var resize_width = 40;//without px
+                var resize_height = 40;
+
+                //get the image selected
+                var item = document.querySelector('#uploader').files[0];
+
+                //create a FileReader
+                var reader = new FileReader();
+
+                //image turned to base64-encoded Data URI.
+                reader.readAsDataURL(item);
+                reader.name = item.name;//get the image's name
+                reader.size = item.size; //get the image's size
+                reader.onload = function(event) {
+                    var img = new Image();//create a image
+                    img.src = event.target.result;//result is base64-encoded Data URI
+                    img.name = event.target.name;//set name (optional)
+                    img.size = event.target.size;//set size (optional)
+                    img.onload = function(el) {
+                    var elem = document.createElement('canvas');//create a canvas
+
+                    //scale the image to 600 (width) and keep aspect ratio
+                    var scaleFactor = resize_width / el.target.width;
+                    elem.width = resize_width;
+                    elem.height = resize_height;
+
+                    //draw in canvas
+                    var ctx = elem.getContext('2d');
+                    ctx.drawImage(el.target, 0, 0, elem.width, elem.height);
+
+                    //get the base64-encoded Data URI from the resize image
+                    var srcEncoded = ctx.canvas.toDataURL('image/png', 1);
+
+                    //assign it to thumb src
+                    document.querySelector('#image').src = srcEncoded;
+
+                    /*Now you can send "srcEncoded" to the server and
+                    convert it to a png o jpg. Also can send
+                    "el.target.name" that is the file's name.*/
+                    //var resized = document.querySelector('#image').src;
+                    
+                    
+                    //get the resized image from src
+                    var resized = document.querySelector('#image').src;
+                    
+                    //note: remember that the image is now base64-encoded Data URI
+                    
+                    //sendind the image to the server (php)
+                    var fd = new FormData();
+                    fd.append("image", resized);
+                    up2(fd);
+                    //sending data to the server
+                    //var xhr = new XMLHttpRequest();
+                    
+                    //xhr.onreadystatechange = function(){
+                      //everything is ok
+                      //if (xhr.readyState==4 && xhr.status==200){
+                        //var response = JSON.parse(xhr.responseText);
+                        //if(response.success == true){
+                          alert('The resized image was uploaded');
+                        //}
+                      //}
+                    //}
+                    //xhr.open("POST", "upload.php");
+                   // xhr.send(fd);
+                    
+
+                    }
+                }
+            }
+            
+
+        </script>
+    </body>
+</html>
